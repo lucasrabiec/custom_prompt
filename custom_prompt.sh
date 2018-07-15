@@ -38,17 +38,8 @@ function git_symbol {
 }
 
 function git_branch {
-  local git_status="$(git status 2> /dev/null)"
-  local on_branch="On branch ([^${IFS}]*)"
-  local on_commit="HEAD detached at ([^${IFS}]*)"
-
-  if [[ $git_status =~ $on_branch ]]; then
-    local branch=${BASH_REMATCH[1]}
-    echo "(branch: $branch $(git_symbol))"
-  elif [[ $git_status =~ $on_commit ]]; then
-    local commit=${BASH_REMATCH[1]}
-    echo "(commit: $commit $(git_symbol))"
-  fi
+  ref=$(git symbolic-ref HEAD 2> /dev/null) || return
+  echo "(git: ${ref#refs/heads/} $(git_symbol))"
 }
 
 PS1="\[$COLOR_CYAN\]\u@\h\[$COLOR_RESET\]:\[$COLOR_MAGENTA\]\w "
